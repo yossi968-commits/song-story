@@ -1,0 +1,125 @@
+/* פריסה: עמודה אחת קריאה; בעמוד שיר הנגן נדבק למעלה בצד, והכלים זורמים לידו */
+:root {
+  --bg: #f4f5f9;
+  --surface: #ffffff;
+  --ink: #17192c;
+  --muted: #5d6178;
+  --line: #dfe1ea;
+  --accent: #2f45c8;
+  --accent-ink: #ffffff;
+  --soft: #e8ebfb;
+  --warn: #9a5b00;
+  --display: "Frank Ruhl Libre", "David", Georgia, serif;
+  --body: "Heebo", "Arial Hebrew", Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1120; --surface: #181b2e; --ink: #eceefa; --muted: #a2a7c4;
+    --line: #2b2f4a; --accent: #8e9bff; --accent-ink: #0f1120; --soft: #23284a; --warn: #f0b45a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1120; --surface: #181b2e; --ink: #eceefa; --muted: #a2a7c4;
+  --line: #2b2f4a; --accent: #8e9bff; --accent-ink: #0f1120; --soft: #23284a; --warn: #f0b45a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 var(--body); }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.2; text-wrap: balance; margin: 0; }
+.wrap { max-width: 1120px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.top { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+.top-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; padding-block: 12px; }
+.brand { font-family: var(--display); font-weight: 900; font-size: 1.5rem; color: var(--ink); text-decoration: none; }
+.top-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.top-nav a { color: var(--ink); text-decoration: none; font-weight: 500; }
+.top-nav a:hover { color: var(--accent); }
+.lang-toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.lang-toggle button { border: 0; background: transparent; padding: 3px 12px; cursor: pointer; color: var(--muted); font-size: .9rem; }
+.lang-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.translate-first { border-color: var(--accent); background: var(--soft); }
+.translate-first .btn { justify-self: start; }
+
+select, input, textarea, button { font: inherit; color: inherit; }
+select, input, textarea { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; }
+textarea { width: 100%; min-height: 110px; }
+input[type="number"] { width: 5.5em; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.btn { border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 6px 16px; cursor: pointer; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn.small { padding: 3px 12px; font-size: .9rem; }
+.row input { min-width: 0; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+
+/* ספרייה */
+.explore { display: grid; gap: 10px; padding-block: 36px 8px; }
+.explore h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 900; }
+.explore-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.explore-row input { flex: 1 1 260px; min-width: 0; font-size: 1.1rem; padding: 10px 14px; background: var(--surface); }
+.explore-row .btn { padding: 10px 24px; font-size: 1.05rem; }
+.lib-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; padding-block: 24px 16px; }
+.lib-head h2 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; }
+.lib-head p { margin: 4px 0 0; color: var(--muted); max-width: 60ch; }
+.search { min-width: 0; width: min(320px, 100%); }
+.tags-bar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 2px 12px; font-size: .9rem; cursor: pointer; color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; padding-bottom: 40px; }
+.card { display: grid; grid-template-rows: auto 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; text-decoration: none; color: var(--ink); }
+.card:hover { border-color: var(--accent); }
+.thumb { aspect-ratio: 16 / 9; background: var(--soft) center / cover no-repeat; max-width: 100%; }
+.card-body { padding: 12px 14px 14px; display: grid; gap: 2px; }
+.card-body h3 { font-size: 1.25rem; }
+.meta { color: var(--muted); font-size: .9rem; }
+.mine { color: var(--warn); font-size: .8rem; font-weight: 700; }
+
+/* עמוד שיר */
+.song-head { padding-block: 28px 16px; display: grid; gap: 4px; }
+.song-head h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; }
+.song-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; align-items: start; padding-bottom: 48px; }
+@media (max-width: 860px) { .song-layout { grid-template-columns: minmax(0, 1fr); } }
+.stage { position: sticky; top: 76px; display: grid; gap: 12px; }
+@media (max-width: 860px) { .stage { position: static; } }
+.player-box { aspect-ratio: 16 / 9; width: 100%; max-width: 100%; background: #000; border-radius: 10px; overflow: hidden; }
+.player-box iframe, .player-box > div { width: 100%; height: 100%; border: 0; }
+.now-playing { color: var(--muted); font-size: .9rem; }
+.subs { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; min-height: 64px; text-align: center; }
+.subs .orig { font-size: 1.2rem; font-weight: 500; }
+.subs .trans { color: var(--muted); }
+
+.tools { display: grid; gap: 16px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; min-width: 0; }
+.panel h2 { font-size: 1.35rem; }
+.panel p { margin: 0; }
+.hint { color: var(--muted); font-size: .88rem; }
+.creators { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.creators b { font-weight: 700; }
+.loop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.loop-grid label { display: grid; gap: 4px; font-size: .9rem; color: var(--muted); }
+.loop-grid .val { display: flex; gap: 6px; align-items: center; min-width: 0; }
+.loop-grid .val input { flex: 1; min-width: 0; width: 100%; }
+.loop-grid input, .loop-grid select { min-width: 0; }
+.loop-status { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 500; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.list li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; border-top: 1px solid var(--line); padding-top: 6px; }
+.list li:first-child { border-top: 0; padding-top: 0; }
+.inst { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.inst h3 { font-family: var(--body); font-size: 1rem; margin-bottom: 4px; }
+.inst ul { margin: 0; padding-inline-start: 18px; }
+details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+audio { width: 100%; }
+
+/* טופס */
+.form { display: grid; gap: 14px; max-width: 720px; padding-block: 28px 48px; }
+.form label { display: grid; gap: 4px; font-weight: 500; }
+.form .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.notice { background: var(--soft); border-radius: 10px; padding: 12px 16px; }
+
+.foot { color: var(--muted); font-size: .85rem; padding-block: 24px 40px; border-top: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
