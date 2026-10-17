@@ -33,6 +33,8 @@
       captionsOn: "הכתוביות המתורגמות פועלות", captionsOff: "הצגת כתוביות מתורגמות", captionsHide: "הסתרת הכתוביות",
       story: "הסיפור של השיר", noStory: "עוד לא נכתב סיפור לשיר הזה.",
       explainer: "הסבר בשיחה של 2 דקות", openNotebook: "פתיחת המחברת ב-NotebookLM",
+      talkPlay: "▶ השמעת השיחה", talkStop: "■ עצירה", talkText: "הטקסט של השיחה", hostA: "נועה", hostB: "איתי",
+      talkNoVoice: "בדפדפן הזה אין קול בעברית. אפשר לקרוא את השיחה כאן למטה, או לפתוח את האתר ב-Chrome או ב-Safari.",
       noExplainer: "עוד אין הסבר מוקלט. הסקיל song-explainer-notebooklm ב-Claude Code מכין אותו ב-NotebookLM ושומר אותו כאן.",
       learn: "לימוד בלופ", learnLead: "בוחרים קטע, והנגן חוזר עליו שוב ושוב עם הפסקה קצרה בין חזרה לחזרה, כדי שתספיקו לשיר אחריו.",
       start: "התחלה", end: "סוף", now: "עכשיו", gap: "הפסקה בין חזרות (שניות)", reps: "מספר חזרות (0 = בלי הגבלה)", speed: "מהירות", normal: "רגילה",
@@ -75,6 +77,8 @@
       captionsOn: "Translated captions are on", captionsOff: "Show translated captions", captionsHide: "Hide captions",
       story: "The story of the song", noStory: "No story written for this song yet.",
       explainer: "2-minute conversation", openNotebook: "Open the notebook in NotebookLM",
+      talkPlay: "▶ Play the conversation", talkStop: "■ Stop", talkText: "Conversation transcript", hostA: "Noa", hostB: "Itai",
+      talkNoVoice: "This browser has no English voice. You can read the conversation below, or open the site in Chrome or Safari.",
       noExplainer: "No recorded explainer yet. The song-explainer-notebooklm skill in Claude Code makes one in NotebookLM and saves it here.",
       learn: "Loop practice", learnLead: "Pick a section and the player repeats it with a short pause between rounds, so you can sing it back.",
       start: "Start", end: "End", now: "Now", gap: "Pause between rounds (sec)", reps: "Rounds (0 = no limit)", speed: "Speed", normal: "Normal",
@@ -397,7 +401,12 @@
             <h2>${T.explainer}</h2>
             ${ex.audio ? `<audio controls preload="none" src="${esc(ex.audio)}"></audio>` : ""}
             ${ex.notebook ? ext(ex.notebook, T.openNotebook) : ""}
-            ${!ex.audio && !ex.notebook ? `<p class="hint">${T.noExplainer}</p>` : ""}
+            ${!ex.audio && (ex.dialogue || []).length ? `
+              <div class="row"><button class="btn" id="talkBtn">${T.talkPlay}</button><span class="hint" id="talkMsg"></span></div>
+              <details><summary>${T.talkText}</summary>
+                <ol class="talk">${ex.dialogue.map((d, i) => `<li data-line="${i}"><b>${d.who ? T.hostB : T.hostA}:</b> ${esc(tx(d))}</li>`).join("")}</ol>
+              </details>` : ""}
+            ${!ex.audio && !ex.notebook && !(ex.dialogue || []).length ? `<p class="hint">${T.noExplainer}</p>` : ""}
             ${tx(ex.note) ? `<p class="hint">${esc(tx(ex.note))}</p>` : ""}
           </section>
 
@@ -505,6 +514,41 @@
     drawCapBtn();
     load(current);
     capBtn.addEventListener("click", () => { captionsOn = !captionsOn; drawCapBtn(); load(current); });
+
+    // שיחה מוקראת בקול הדפדפן (חינמי, בלי שרת). שני מגישים: קול שונה או גובה צליל שונה.
+    const talkBtn = $("#talkBtn");
+    if (talkBtn) {
+      const synth = window.speechSynthesis;
+      const langCode = ui === "he" ? "he" : "en";
+      let talking = false;
+      const lines = view.querySelectorAll(".talk li");
+      const mark = (i) => lines.forEach((li, j) => li.classList.toggle("on", j === i));
+      const stopTalk = () => { talking = false; if (synth) synth.cancel(); mark(-1); talkBtn.textContent = T.talkPlay; };
+      cleanup.push(stopTalk);
+      talkBtn.addEventListener("click", () => {
+        if (talking) return stopTalk();
+        const voices = synth ? synth.getVoices().filter((v) => v.lang.toLowerCase().replace("iw", "he").startsWith(langCode)) : [];
+        if (!synth || (!voices.length && synth.getVoices().length)) { $("#talkMsg").textContent = T.talkNoVoice; view.querySelector("#explainer details").open = true; return; }
+        talking = true; talkBtn.textContent = T.talkStop;
+        if (player) player.pause();
+        const speak = (i) => {
+          if (!talking || i >= ex.dialogue.length) return stopTalk();
+          const d = ex.dialogue[i];
+          const u = new SpeechSynthesisUtterance(tx(d));
+          u.lang = langCode === "he" ? "he-IL" : "en-US";
+          const v = voices[d.who ? Math.min(1, voices.length - 1) : 0];
+          if (v) u.voice = v;
+          if (voices.length < 2) u.pitch = d.who ? 0.8 : 1.2;
+          u.rate = 1.02;
+          u.onend = () => speak(i + 1);
+          u.onerror = () => speak(i + 1);
+          mark(i);
+          synth.speak(u);
+        };
+        synth.cancel();
+        speak(0);
+      });
+    }
 
     // לופ
     let loop = null;

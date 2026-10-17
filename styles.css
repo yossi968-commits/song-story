@@ -114,6 +114,8 @@ input[type="number"] { width: 5.5em; }
 .inst ul { margin: 0; padding-inline-start: 18px; }
 details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
 audio { width: 100%; }
+.talk { margin: 8px 0 0; padding-inline-start: 20px; display: grid; gap: 6px; }
+.talk li.on { color: var(--accent); }
 
 /* טופס */
 .form { display: grid; gap: 14px; max-width: 720px; padding-block: 28px 48px; }
